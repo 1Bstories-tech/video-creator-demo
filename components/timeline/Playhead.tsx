@@ -10,13 +10,14 @@ export const Playhead: React.FC = observer(() => {
   const time = videoCreator.time;
   const timelineScale = videoCreator.timelineScale;
 
+
   const scrubToTime = (time: number) => {
     runInAction(() => (videoCreator.isScrubbing = true));
     videoCreator.setTime(time).then(() => runInAction(() => (videoCreator.isScrubbing = false)));
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const throttledScrubToTime = useCallback(throttle(scrubToTime, 15), []);
+  const throttledScrubToTime = useCallback(throttle(scrubToTime, 150), []);
 
   return (
     <Draggable

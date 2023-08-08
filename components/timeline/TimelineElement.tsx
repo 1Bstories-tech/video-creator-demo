@@ -52,6 +52,9 @@ export const TimelineElement: React.FC<TimelineElementProps> = observer((props) 
             onClick={() => {
               videoCreator.setActiveElements(props.element.source.id);
             }}
+            onDoubleClick={()=>{
+              videoCreator.preview?.setActiveComposition(props.element.source.id)
+            }}
           >
             {props.element.source.name ??
               props.element.source.type[0].toUpperCase() + props.element.source.type.slice(1)}

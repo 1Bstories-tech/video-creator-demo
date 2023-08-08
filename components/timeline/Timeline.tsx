@@ -13,7 +13,6 @@ export const Timeline: React.FC = observer(() => {
     <Main>
       <Content>
         <Playhead />
-
         <Tracks>
           {tracks.map(([track, elements]) => (
             <TimelineTrack key={track} elements={elements} />

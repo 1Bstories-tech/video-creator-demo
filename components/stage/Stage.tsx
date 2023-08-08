@@ -1,8 +1,24 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import styled from 'styled-components';
-import { videoCreator } from '../../stores/VideoCreatorStore';
+import {getDisplayName, videoCreator} from '../../stores/VideoCreatorStore';
 import { CreateButton } from './CreateButton';
+
+const BreadCrumbs = observer(()=>{
+    const parents = videoCreator.activeParents || [getDisplayName()];
+    return <div>
+        <ul>
+            {parents.map((parent, index) => {
+                return <li key={parent.id||'undefined'} onClick={()=>{
+                    videoCreator.setActiveComposition(parent.id || null);
+                }}>
+                    <span>{parent.name}</span>
+                    {index < parents.length - 1 && <span> > </span>}
+                </li>
+            })}
+        </ul>
+    </div>
+})
 
 export const Stage: React.FC = observer(() => {
   return (
@@ -16,7 +32,9 @@ export const Stage: React.FC = observer(() => {
         style={{ width: '100%', height: '100%' }}
       />
 
+
       <TopLeftButtons>
+          <BreadCrumbs />
         <ActionButton
           onClick={async () => {
             await videoCreator.createElement({

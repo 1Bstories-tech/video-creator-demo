@@ -12,7 +12,6 @@ const VideoCreator: React.FC = observer(() => {
         <Stage />
         <SidePanel />
       </MainView>
-
       <Timeline />
     </Main>
   );
