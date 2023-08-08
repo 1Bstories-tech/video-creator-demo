@@ -8,7 +8,7 @@ type ParentNode = {
     id: string | undefined
     name: string
 }
-export const getDisplayName = (node?: ElementState) => {
+export const getDisplayName = (node?: ElementState | PreviewState) => {
     if (!node || !node.source.id) {
         return {id: undefined, name: 'Main Composition'};
     } else {
@@ -16,7 +16,7 @@ export const getDisplayName = (node?: ElementState) => {
     }
 }
 
-const findPathToNode = (node: ElementState, id:string): ParentNode[] | null => {
+const findPathToNode = (node: ElementState | PreviewState, id: string): ParentNode[] | null => {
     if (node.source.id === id) {
         return [getDisplayName(node)];
     }
@@ -42,7 +42,7 @@ class VideoCreatorStore {
 
     activeElementIds: string[] = [];
 
-    activeParents: ParentNode[] = [];
+    activeParents: ParentNode[] | null = [];
 
     activeCompositionId?: string = undefined;
 
@@ -119,10 +119,10 @@ class VideoCreatorStore {
         if (this.activeCompositionId) {
             const activeCompositionElement = this.preview?.findElement((element) => element.source.id === this.activeCompositionId);
             this.time = time;
-            if(activeCompositionElement){
+            if (activeCompositionElement) {
                 this.previewTime = activeCompositionElement.globalTime + time;
                 await this.preview?.setTime(this.previewTime);
-            }else{
+            } else {
                 this.previewTime = time;
                 await this.preview?.setTime(time);
             }
@@ -155,14 +155,17 @@ class VideoCreatorStore {
     updateTracks() {
         if (this.activeCompositionId) {
             const activeCompositionElement = this.preview?.findElement((element) => element.source.id === this.activeCompositionId);
-            this.tracks = groupBy(activeCompositionElement.elements, (element) => element.track);
-            if(this.state){
-                this.activeParents = findPathToNode(this.state, this.activeCompositionId);
+            if (activeCompositionElement) {
+                this.tracks = groupBy(activeCompositionElement.elements || [], (element) => element.track);
+                if (this.state) {
+                    this.activeParents = findPathToNode(this.state, this.activeCompositionId);
+                }
             }
+
 
         } else {
             this.tracks = groupBy(this.state?.elements || [], (element) => element.track);
-            if(this.state) {
+            if (this.state) {
                 this.activeParents = null
             }
         }
